@@ -1,0 +1,119 @@
+*{
+  margin: 0px;
+  box-sizing: border-box;
+}
+@font-face {
+  font-family: 'Grinched';
+  src: url('{{ url_for("static", filename="fonts/grinched.regular.otf") }}');
+  font-style: normal;
+  font-weight: 1 1000;
+}
+body{
+  margin-top: 66px;
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: rgb(122, 178, 208);
+  /*background-color: rgb(58, 58, 73);*/
+  color: white;
+  padding: 0px 10px;
+  padding-bottom: 80px;
+}
+nav{
+  display: flex;
+  justify-content: space-between;
+  background-color: rgb(165, 43, 43);
+  padding: 20px 20px;
+  position: fixed;
+  right: 0px;
+  left: 0px;
+  top:0px;
+  z-index: 1000;
+  color: black;
+  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-size: 20px;
+  border-bottom: 1px solid rgba(209, 208, 208, 0.589);
+
+}
+.li-title{
+  font-weight: bolder;
+  font-size: 22px;
+  font-family: 'Grinched';
+  text-shadow: 0px 0px 3px white;
+}
+.top-left-nav{
+  list-style: none;
+  padding: 0px;
+  display: inline-block;
+}
+.top-left-nav li,.top-right-nav li{
+  display: inline-block;
+  margin-right: 6px;
+  margin-left: 6px;
+}
+.top-right-nav{
+  list-style: none;
+  padding: 0px;
+  display: inline-block;
+}
+
+.nav-item{
+  text-decoration: none;
+  color: rgb(202, 201, 201);
+  margin-left: 15px;
+}
+.nav-item:hover{
+  color: rgb(255, 255, 255);
+  cursor: pointer;
+}
+
+
+.nav-name{
+  text-decoration: none;
+  color: rgb(255, 255, 255);
+}
+
+
+.alertbox {
+  background-color: rgb(0, 132, 255);
+  color: white;
+  border-radius: 5px;
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+
+
+  display: flex;
+  justify-content: space-between;
+  
+}
+
+
+.alert-danger {
+  background-color: rgb(185, 33, 33);
+}
+.alert-success {
+  background-color: rgb(40, 158, 40);
+}
+
+.x-button {
+  cursor: pointer;
+}
+.hide-alert {
+  display: none;
+}
+
+a {
+  text-decoration: none;
+  color: Black;
+}
+
+
+
+
+
+
+
+
+
+
+
+

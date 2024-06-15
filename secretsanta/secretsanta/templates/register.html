@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block style %}
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/register.css') }}">
+{% endblock %}
+
+
+{% block title %}
+Register Page
+{% endblock %}
+
+
+
+
+{% block content %}
+  
+  <center>
+  
+  <div class="form-div">
+    <h1>Create Account</h1><br>
+    <form method="POST" class="form-register" style="color:white">
+      {{ form.hidden_tag() }}
+      <div class="div-field">
+      {{ form.username.label() }} <br>
+      {{ form.username(class="user-info",placeholder="Username...") }}
+      </div>
+
+      <br>
+      <div class="div-field">
+      {{ form.first_name.label() }}<br>
+      {{ form.first_name(class="user-info",placeholder="First Name...") }}
+      </div>
+
+      <br>
+      <div class="div-field">
+      {{ form.last_name.label() }}<br>
+      {{ form.last_name(class="user-info",placeholder="Last Name...") }}
+      </div>
+
+      <br>
+      <div class="div-field">
+      {{ form.email_address.label() }}<br>
+      {{ form.email_address(class="user-info",placeholder="Email...") }}
+      </div>
+
+      <br>
+      <div class="div-field">
+      {{ form.password1.label() }}<br>
+      {{ form.password1(class="user-info",placeholder="Password...") }}
+      </div>
+      
+      <br>
+      <div class="div-field">
+      {{ form.password2.label() }}<br>
+      {{ form.password2(class="user-info",placeholder="Confirm Password") }}
+      </div>
+    
+      <br>
+      <div class="create-button-div">
+      {{ form.submit(class="create-button") }}
+      </div>
+      <div class="already-account">
+        <a  href="{{ url_for('login_page') }}" class="account-anchor">Already have an account?</a>
+        </div>
+    </form>
+  </div>
+</center>
+  
+{% endblock %}
+

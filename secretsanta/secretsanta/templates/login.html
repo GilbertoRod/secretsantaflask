@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block style %}
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/register.css') }}">
+{% endblock %}
+
+
+{% block title %}
+Login Page
+{% endblock %}
+
+
+
+
+{% block content %}
+  
+  <center>
+  
+  <div class="form-div">
+    <h1>Login</h1><br>
+    <form method="POST" class="form-register" style="color:white">
+      {{ form.hidden_tag() }}
+      <div class="div-field">
+      {{ form.username.label() }} <br>
+      {{ form.username(class="user-info",placeholder="Username or Email...") }}
+      </div>
+
+      <br>
+
+      <div class="div-field">
+      {{ form.password.label() }}<br>
+      {{ form.password(class="user-info",placeholder="Password...") }}
+      </div>  
+
+      <br>
+
+      <div class="create-button-div">
+      {{ form.submit(class="sign-button") }}
+      </div>
+      <div class="already-account">
+        <a href="{{ url_for('register_page') }}" class="account-anchor">Don't have an account?</a>
+        </div>
+    </form>
+  </div>
+</center>
+  
+{% endblock %}
+

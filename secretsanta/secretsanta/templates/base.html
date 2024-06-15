@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/main.css') }}">
+  
+  {% block style %}
+
+  {% endblock %}
+  
+
+  <title>
+    {% block title %}
+
+    {% endblock %}
+  </title>
+</head>
+<body>
+  <nav>
+    <ul class="top-left-nav">
+      <a href="{{ url_for('home_page') }}" ><li class="li-title">
+        Secret Santa
+      </li></a>
+    {% if current_user.is_authenticated %}
+      <li>
+        <a href="{{ url_for('dashboard_page') }}" class="nav-item">Dashboard</a>
+      </li>
+      <li>
+        <a href="{{ url_for('events_page') }}" class="nav-item">Events</a>
+      </li>
+    {% endif %}
+    </ul>
+    
+
+    {% if current_user.is_authenticated %}
+    
+    <ul class="top-right-nav">
+      <li>
+        <p class="nav-name">Hello, {{ current_user.first_name.title() }} </p>
+      </li>
+
+      <li>
+        <a class="nav-item" href="{{ url_for('logout_page') }}">Logout</a>
+      </li>
+    </ul>
+    
+    {% else %}
+   
+    <ul class="top-right-nav">
+      <li>
+        <a class="nav-item"  href="{{ url_for('login_page') }}">Login</a>
+      </li>
+      <li>
+        <a class="nav-item" href="{{ url_for('register_page') }}">Register</a>
+      </li>
+    </ul>
+
+    {% endif %}
+
+  </nav>
+    
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+      <div class="alertbox js-alert alert-{{category}}" id="alert{{ loop.index }}">
+
+
+
+        <p>{{ message }}</p>
+        <img src="{{ url_for('static',filename='images/x.png') }}" height="15px" class="x-button" onclick="exitAlert('{{ loop.index }}')">
+
+      </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+  
+  {% block content %}
+
+  {% endblock %}
+
+
+  <script>
+    function exitAlert(alertId) {
+        document.getElementById('alert' + alertId).classList.add("hide-alert");
+        document.getElementById('alert' + alertId).classList.remove("alertbox");
+    }
+  </script>
+
+  
+  
+</body>
+</html>

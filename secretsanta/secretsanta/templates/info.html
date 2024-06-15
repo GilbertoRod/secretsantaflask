@@ -1,0 +1,602 @@
+{% extends 'base.html' %}
+
+  {% block style %}
+  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/events.css') }}">
+
+  {% endblock %}
+
+  {% block title %}
+  Secret Santa | Event Details
+  {% endblock %}
+
+
+  {% block content %}
+
+  
+  {% if event.event_status=='open' %}
+
+  <center>
+
+    <div class="create-div">
+
+
+      <div class="event">
+        <div class="titles-div">
+          <h1 class="e-title"><span class="event-info-title">{{event.event_name|title}}</span></h1>
+          <h1 class="event-title e-title">Event Coordinator: <span class="event-info">{{event.coordinator.username}}</span></h1>
+          <h1 class="event-title e-title">Members:</h1>
+          <h1 class="event-title e-title">
+          
+          {% for attendee in event.members %}
+            {% if current_user.username==attendee.user.username %}
+              {% if attendee.user.id==event.coordinator_id %}
+                <li class="event-info">{{ attendee.user.username }} </li>
+                
+              {% elif attendee.status =='member'%}
+              <div class="member-delete">
+                <li class="event-info">{{ attendee.user.username }} </li>
+                
+              </div>
+              {% endif %}
+
+            {% else %}
+
+              {% if attendee.status =='member'%}
+              <div class="member-delete">
+                <li class="event-info">{{ attendee.user.username }} </li>
+                  {% if current_user.id==event.coordinator_id %}
+                    <a href="{{ url_for('delete_member', member_id=attendee.user.id, event_id=event.event_id) }}"><button class="delete-member-btn ">Remove</button></a>
+
+                  {% endif %}
+              </div>
+              {% endif %}
+
+            {% endif %}
+          {% endfor %}
+            </h1>
+        </div>
+
+
+
+        <div class="buttons">
+
+          
+          {% if current_user.is_authenticated and current_user.id == event.coordinator.id %}
+          <br><br><br>
+            <br><br><br><br><br>
+            
+            <form method="POST">
+              {{ form.hidden_tag() }}
+              {{ form.username(class="user-info",placeholder="Username...") }}
+              {{ form.submit(class="add-btn") }}
+            </form>
+          {% endif %}
+
+        </div>
+        {% if current_user.is_authenticated and current_user.id == event.coordinator.id %}
+          {% if event_pending %}
+            <div class="request-container">
+              <h1 class="e-title">Pending Requests:</h1><br/>
+              {% for attendee in event.members %}
+              
+                {% if attendee.status == 'pending'%}
+                <div class="request-flex">
+                  <h4>{{attendee.user.username}}</h4>
+                  <div class="ad-btns">
+                  <a href="{{ url_for('accept_member', member_id=attendee.user.id, event_id=event.event_id) }}"><button class="accept-btn">Accept</button></a>
+                  <a href="{{ url_for('decline_member', member_id=attendee.user.id, event_id=event.event_id) }}"><button class="decline-btn">Decline</button></a>
+                  </div>
+                </div>
+                {% endif%}
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endif %}
+        <br><br><br><br>
+
+        
+        {% if current_user.is_authenticated and current_user.id == event.coordinator.id and not event_fields %}
+          <h1 class="fields-title">Fields For Participants to Fill:</h1>
+          <br>
+          <p class="fields-subtitle">Up to 10 fields*</p>
+          <br><br>
+          <form method="POST">
+            {{ fieldform.hidden_tag() }}
+            {{ fieldform.field_1(class="user-info", id=1, placeholder="First Field...") }}<button class="js-button" id= "first" type="button" onclick="nextfield(2,'second','first')">+</button><br>
+            {{ fieldform.field_2(class="js-user-info", id=2,placeholder="Second Field...") }}<button class="js-button-inv" id= "second" type="button" onclick="nextfield(3,'third','second')">+</button><br>
+            {{ fieldform.field_3(class="js-user-info", id=3,placeholder="Third Field...") }}<button class="js-button-inv" id= "third" type="button" onclick="nextfield(4,'fourth','third')">+</button><br>
+            {{ fieldform.field_4(class="js-user-info", id=4,placeholder="Fourth Field...") }}<button class="js-button-inv" id= "fourth" type="button" onclick="nextfield(5,'fifth','fourth')">+</button><br>
+            {{ fieldform.field_5(class="js-user-info", id=5,placeholder="Fifth Field...") }}<button class="js-button-inv" id= "fifth" type="button" onclick="nextfield(6,'sixth','fifth')">+</button><br>
+            {{ fieldform.field_6(class="js-user-info", id=6,placeholder="Sixth Field...") }}<button class="js-button-inv" id= "sixth" type="button" onclick="nextfield(7,'seventh','sixth')">+</button><br>
+            {{ fieldform.field_7(class="js-user-info", id=7,placeholder="Seventh Field...") }}<button class="js-button-inv" id= "seventh" type="button" onclick="nextfield(8,'eight','seventh')">+</button><br>
+            {{ fieldform.field_8(class="js-user-info", id=8,placeholder="Eighth Field...") }}<button class="js-button-inv" id= "eight" type="button" onclick="nextfield(9,'ninth','eight')">+</button><br>
+            {{ fieldform.field_9(class="js-user-info", id=9,placeholder="Ninth Field...") }}<button class="js-button-inv" id= "ninth" type="button" onclick="nextfield(10,'ninth','ninth')">+</button><br>
+            {{ fieldform.field_10(class="js-user-info", id=10,placeholder="Tenth Field...") }}<br>
+            <br>
+            {{ fieldform.submit(class="add-btn") }}
+          </form>
+        {% endif%}
+
+        {% if current_user.is_authenticated and event_fields and member_status and not person_info%}
+        <h1 class="e-title">Fill Out Your Information*</h1><br>
+        
+        <form method="POST" action="{{ url_for('user_fields_add', event_id=event.event_id) }}">
+          {{ userfieldsform.hidden_tag() }}
+          <div class="form-container">
+          {% if event_fields.field_1 %}
+            <div class="field-item form-flex">
+              {{event_fields.field_1 | title}}:
+              {{ userfieldsform.field_1(class="user-info")}}
+            </div>
+          {% endif %}
+
+          {% if event_fields.field_2 %}
+            <div class="field-item form-flex">
+              {{event_fields.field_2 | title}}:
+              {{ userfieldsform.field_2(class="user-info")}}
+            </div>
+          {% endif %}
+
+          {% if event_fields.field_3 %}
+            <div class="field-item form-flex">
+              {{event_fields.field_3 | title}}:
+              {{ userfieldsform.field_3(class="user-info")}}
+            </div>
+
+          {% endif %}
+
+          {% if event_fields.field_4 %}
+            <div class="field-item form-flex">
+              {{event_fields.field_4 | title}}:
+              {{ userfieldsform.field_4(class="user-info")}}
+            </div>
+          {% endif %}
+
+          {% if event_fields.field_5 %}
+            <div class="field-item form-flex">
+              {{event_fields.field_5 | title}}:
+              {{ userfieldsform.field_5(class="user-info")}}
+            </div>
+          {% endif %}
+
+          {% if event_fields.field_6 %}
+            <div class="field-item form-flex">
+              {{event_fields.field_6 | title}}:
+              {{ userfieldsform.field_6(class="user-info")}}
+            </div>
+          {% endif %}
+
+          {% if event_fields.field_7 %}
+            <div class="field-item form-flex">
+              {{event_fields.field_7 | title}}:
+            {{ userfieldsform.field_7(class="user-info")}}
+            </div>
+          {% endif %}
+
+          {% if event_fields.field_8 %}
+            <div class="field-item form-flex">
+              {{event_fields.field_8 | title}}:
+              {{ userfieldsform.field_8(class="user-info")}}
+            </div>
+          {% endif %}
+
+          {% if event_fields.field_9 %}
+            <div class="field-item form-flex">
+            {{event_fields.field_9 | title}}:
+            {{ userfieldsform.field_9(class="user-info")}}
+            </div>
+          {% endif %}
+
+          {% if event_fields.field_10 %}
+            <div class="field-item form-flex">
+            {{event_fields.field_10 | title}}:
+            {{ userfieldsform.field_10(class="user-info")}}
+            </div>
+          {% endif %}
+
+          {{userfieldsform.submit(class='submit-info-btn')}}
+          </div>
+        </form>
+        {% elif current_user.is_authenticated and event_fields and member_status and person_info %}
+          
+          <h1 class="fields-title">Your Information for This Event:</h1><br>
+          {% if person_info.field_1 %}
+          <div class="field-item form-flex">
+          {{event_fields.field_1 | title}}:
+          {{person_info.field_1 | title}}
+          </div>
+          {% endif %}
+
+          {% if person_info.field_2 %}
+          <div class="field-item form-flex">
+          {{event_fields.field_2 | title}}:
+          {{person_info.field_2 | title}}
+          </div>
+          {% endif %}
+          
+          {% if person_info.field_3 %}
+          <div class="field-item form-flex">
+          {{event_fields.field_3 | title}}:
+          {{person_info.field_3 | title}}
+          </div>
+          {% endif %}
+
+          {% if person_info.field_4 %}
+          <div class="field-item form-flex">
+          {{event_fields.field_4 | title}}:
+          {{person_info.field_4 | title}}
+          </div>
+          {% endif %}
+
+          {% if person_info.field_5 %}
+          <div class="field-item form-flex">
+          {{event_fields.field_5 | title}}:
+          {{person_info.field_5 | title}}
+          </div>
+          {% endif %}
+
+          {% if person_info.field_6 %}
+          <div class="field-item form-flex">
+          {{event_fields.field_6 | title}}:
+          {{person_info.field_6 | title}}
+          </div>
+          {% endif %}
+
+          {% if person_info.field_7 %}
+          <div class="field-item form-flex">
+          {{event_fields.field_7 | title}}:
+          {{person_info.field_7 | title}}
+          </div>
+          {% endif %}
+
+          {% if person_info.field_8 %}
+          <div class="field-item form-flex">
+          {{event_fields.field_8 | title}}:
+          {{person_info.field_8 | title}}
+          </div>
+          {% endif %}
+
+          {% if person_info.field_9 %}
+          <div class="field-item form-flex">
+          {{event_fields.field_9 | title}}:
+          {{person_info.field_9 | title}}
+          </div>
+          {% endif %}
+
+          {% if person_info.field_10 %}
+          <div class="field-item form-flex">
+          {{event_fields.field_10 | title}}:
+          {{person_info.field_10 | title}}
+          </div>
+          {% endif %}
+
+
+        {% elif current_user.is_authenticated and event_fields %}
+        
+        <h1 class="fields-title">Fields for This Event:</h1><br>
+          <div class="field-item">{{event_fields.field_1 | title}}</div>
+          <div class="field-item">{{event_fields.field_2 | title}}</div>
+          <div class="field-item">{{event_fields.field_3 | title}}</div>
+          <div class="field-item">{{event_fields.field_4 | title}}</div>
+          <div class="field-item">{{event_fields.field_5 | title}}</div>
+          <div class="field-item">{{event_fields.field_6 | title}}</div>
+          <div class="field-item">{{event_fields.field_7 | title}}</div>
+          <div class="field-item">{{event_fields.field_8 | title}}</div>
+          <div class="field-item">{{event_fields.field_9 | title}}</div>
+          <div class="field-item">{{event_fields.field_10 | title}}</div>
+        {% endif %}
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="key-btns-container">
+          {% if current_user.is_authenticated and member_status and current_user.id!=event.coordinator.id %}
+
+          <br><br><br>
+          <div class="js-confirm-delete-event">
+            <div class="confirm-info-container">
+            <p class="confirm-delete-text-title">Are you sure you want to leave this event?</p><br>
+            <p class="confirm-delete-text"><b>Note</b>: You will be removed from this event.</p><br><br><br>
+            <div class="confirm-delete-btns">
+              <button class="cancel-btn"  onclick="untoggleConfirm()">Cancel</button>
+              <a href="{{ url_for('leave_event', event_id=event.event_id) }}"><button class="delete-btn">Leave</button></a>
+            </div>
+            </div>
+          </div>
+            <button class="leave-btn" onclick="toggleConfirm()">Leave Event</button>
+
+
+
+          {% endif %}
+
+
+
+
+          {% if current_user.is_authenticated and current_user.id == event.coordinator.id and event_fields and event.members|length>2 and  event.members|length==event.filled_fields|length %}
+
+          <br><br><a href="{{ url_for('start_event', event_id=event.event_id) }}"><button class="start-event-btn">Start Event</button></a>
+          {% elif current_user.is_authenticated and current_user.id == event.coordinator.id and event_fields and event.members|length>1 and event.members|length!=event.filled_fields|length %}
+            {% set remainder = event.members|length - event.filled_fields|length %}
+
+            <br><br><button class="start-event-btn-inactive" title="{{remainder}} Participant(s) not ready">Start Event</button>
+        
+        
+          {% elif current_user.is_authenticated and current_user.id == event.coordinator.id and event_fields and event.members|length<3 %}
+            <br><br><button class="start-event-btn-inactive" title="must have at least 3 members">Start Event</button>
+          
+          
+          {% elif current_user.is_authenticated and current_user.id == event.coordinator.id and not event_fields and event.members|length==1 %}
+            <br><br><button class="start-event-btn-inactive" title="must add at least 1 field and 2 more participants">Start Event</button>
+          
+        
+          {% elif current_user.is_authenticated and current_user.id == event.coordinator.id and not event_fields and event.members|length>1 %}
+            <br><br><button class="start-event-btn-inactive" title="must add at least 1 field">Start Event</button>
+          
+
+        {% endif %}
+        {% if current_user.is_authenticated and current_user.id == event.coordinator.id %}
+          <br><br><br>
+          <div class="js-confirm-delete-event">
+            <div class="confirm-info-container">
+            <p class="confirm-delete-text-title">Are you sure you want to delete this event?</p><br>
+            <p class="confirm-delete-text"><b>Note</b>: This event will be deleted and remove all its members.</p><br><br><br>
+            <div class="confirm-delete-btns">
+              <button class="cancel-btn"  onclick="untoggleConfirm()">Cancel</button>
+              <a href="{{ url_for('delete_event', event_id=event.event_id) }}"><button class="delete-btn">Delete</button></a>
+            </div>
+            </div>
+          </div>
+            <button class="delete-btn" onclick="toggleConfirm()">Delete Event</button>
+        {% endif %}
+        </div>
+
+
+
+
+
+
+
+
+
+      </div>
+
+    </div>
+
+
+  </center>
+  {% elif event.event_status=='closed' and member_status %}
+  <center>
+  <div class="event">
+    <div class="titles-div">
+      <h1 class="e-title"><span class="event-info-title">{{event.event_name|title}}</span></h1>
+      <h1 class="event-title e-title">Event Coordinator: <span class="event-info">{{event.coordinator.username}}</span></h1>
+      <br><br>
+      <h1 class="event-title e-title">You are giving to:</h1>
+      <br>
+      <a href="{{ url_for('secret_info', event_id=event.event_id, person_id=giving.receiver.id) }}"><button class="secret-btn">Secret Person</button></a>
+      <br>
+
+
+
+
+    </div>
+    <br><br><br>
+    <h1 class="fields-title">Your Fields for This Event:</h1><br>
+
+
+
+
+
+    <form method="POST" action="{{ url_for('user_fields_update', event_id=event.event_id) }}">
+      {{ updateuserinfo.hidden_tag() }}
+      <div class="form-container">
+      {% if event_fields.field_1 %}
+        <div class="field-item form-flex">
+          {{event_fields.field_1 | title}}:
+          {{ updateuserinfo.field_1(class="user-info-update", value=person_info.field_1)}}
+        </div>
+      {% endif %}
+
+      {% if event_fields.field_2 %}
+        <div class="field-item form-flex">
+          {{event_fields.field_2 | title}}:
+          {{ updateuserinfo.field_2(class="user-info-update", value=person_info.field_2)}}
+        </div>
+      {% endif %}
+
+      {% if event_fields.field_3 %}
+        <div class="field-item form-flex">
+          {{event_fields.field_3 | title}}:
+          {{ updateuserinfo.field_3(class="user-info-update", value=person_info.field_3)}}
+        </div>
+
+      {% endif %}
+
+      {% if event_fields.field_4 %}
+        <div class="field-item form-flex">
+          {{event_fields.field_4 | title}}:
+          {{ updateuserinfo.field_4(class="user-info-update", value=person_info.field_4)}}
+        </div>
+      {% endif %}
+
+      {% if event_fields.field_5 %}
+        <div class="field-item form-flex">
+          {{event_fields.field_5 | title}}:
+          {{ updateuserinfo.field_5(class="user-info-update", value=person_info.field_5)}}
+        </div>
+      {% endif %}
+
+      {% if event_fields.field_6 %}
+        <div class="field-item form-flex">
+          {{event_fields.field_6 | title}}:
+          {{ updateuserinfo.field_6(class="user-info-update", value=person_info.field_6)}}
+        </div>
+      {% endif %}
+
+      {% if event_fields.field_7 %}
+        <div class="field-item form-flex">
+          {{event_fields.field_7 | title}}:
+        {{ updateuserinfo.field_7(class="user-info-update", value=person_info.field_7)}}
+        </div>
+      {% endif %}
+
+      {% if event_fields.field_8 %}
+        <div class="field-item form-flex">
+          {{event_fields.field_8 | title}}:
+          {{ updateuserinfo.field_8(class="user-info-update", value=person_info.field_8)}}
+        </div>
+      {% endif %}
+
+      {% if event_fields.field_9 %}
+        <div class="field-item form-flex">
+        {{event_fields.field_9 | title}}:
+        {{ updateuserinfo.field_9(class="user-info-update", value=person_info.field_9)}}
+        </div>
+      {% endif %}
+
+      {% if event_fields.field_10 %}
+        <div class="field-item form-flex">
+        {{event_fields.field_10 | title}}:
+        {{ updateuserinfo.field_10(class="user-info-update", value=person_info.field_10)}}
+        </div>
+      {% endif %}
+
+      {{updateuserinfo.submit(class='submit-info-btn')}}
+
+      </div>
+    </form>
+    <br><br><br>
+
+
+
+
+
+    
+    <h1 class="event-title e-title">Members:</h1>
+    <h1 class="event-title e-title">
+    
+    {% for attendee in event.members %}
+        {% if attendee.status =='member'%}
+        <div class="member-delete">
+          <li class="event-info">{{ attendee.user.username }} - {{ attendee.user.first_name |title}} {{ attendee.user.last_name|title }}</li>
+        </div>
+        {% endif %}
+    {% endfor %}
+      </h1>
+
+
+      {% if current_user.id==event.coordinator_id %}
+      <br><br><br><br><br><br>
+      <div class="js-confirm-delete-event">
+        <div class="confirm-info-container">
+        <p class="confirm-delete-text-title">Are you sure you want to finish this event?</p><br>
+        <p class="confirm-delete-text"><b>Note</b>: This will delete all of the data related to this event.</p><br><br><br>
+        <div class="confirm-delete-btns">
+          <button class="cancel-btn"  onclick="untoggleConfirm()">Cancel</button>
+          <a href="{{ url_for('delete_event', event_id=event.event_id) }}"><button class="delete-btn">Delete</button></a>
+        </div>
+        </div>
+      </div>
+        <button class="delete-btn" onclick="toggleConfirm()">Finish Event</button>
+      {% endif %}
+
+
+
+  </div>
+  </center>
+  <br><br><br>
+  
+  
+  {% elif event.event_status=='closed'%}
+  <center>
+  <div class="event">
+    <div class="titles-div">
+      <h1 class="e-title"><span class="event-info-title"><span style="color:rgb(245, 41, 41);">THIS IS A CLOSED EVENT</span><br><br>{{event.event_name|title}}</span></h1>
+      <h1 class="event-title e-title">Event Coordinator: <span class="event-info">{{event.coordinator.username}}</span></h1>
+      <h1 class="event-title e-title">Members:</h1>
+      <h1 class="event-title e-title">
+      
+      {% for attendee in event.members %}
+          {% if attendee.status =='member'%}
+          <div class="member-delete">
+            <li class="event-info">{{ attendee.user.username }} </li>
+          </div>
+          {% endif %}
+      {% endfor %}
+        </h1>
+
+
+
+
+
+
+
+
+
+        
+    </div>
+    <br><br><br>
+    <h1 class="fields-title">Fields for This Event:</h1><br>
+    <div class="field-item">{{event_fields.field_1 | title}}</div>
+    <div class="field-item">{{event_fields.field_2 | title}}</div>
+    <div class="field-item">{{event_fields.field_3 | title}}</div>
+    <div class="field-item">{{event_fields.field_4 | title}}</div>
+    <div class="field-item">{{event_fields.field_5 | title}}</div>
+    <div class="field-item">{{event_fields.field_6 | title}}</div>
+    <div class="field-item">{{event_fields.field_7 | title}}</div>
+    <div class="field-item">{{event_fields.field_8 | title}}</div>
+    <div class="field-item">{{event_fields.field_9 | title}}</div>
+    <div class="field-item">{{event_fields.field_10 | title}}</div>
+  </div>
+  </center>
+
+  {% endif %}
+
+
+
+
+
+  <script>
+    
+    function nextfield(id,btnID,prevBTN){
+      console.log(id)
+      
+      document.getElementById(id).classList.add("user-info")
+      document.getElementById(id).classList.remove("js-user-info")
+      
+      document.getElementById(btnID).classList.add("js-button")
+      document.getElementById(btnID).classList.remove("js-button-inv")
+      
+      document.getElementById(prevBTN).classList.add("js-button-inv")
+      document.getElementById(prevBTN).classList.remove("js-button")
+    }
+    function toggleConfirm(){
+      box_to_toggle=document.querySelector(".js-confirm-delete-event")
+      box_to_toggle.classList.add("confirm-delete-event")
+      box_to_toggle.classList.remove("js-confirm-delete-event")
+    }
+    function untoggleConfirm(){
+      box_to_toggle=document.querySelector(".confirm-delete-event")
+      box_to_toggle.classList.remove("confirm-delete-event")
+      box_to_toggle.classList.add("js-confirm-delete-event")
+    }
+    
+  </script>
+  {% endblock %}
+</body>
+</html>

@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+
+{% block style %}
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/dashboard.css') }}">
+{% endblock %}
+
+
+
+{% block content %}
+
+
+
+<center>
+
+
+{% if user_events %}
+  <div class="content-container">
+  <div class="event-filled">
+    <h3>Your Coordinator events</h3><br/>
+    <div class="info-titles">
+      <div class="event-info-interior">
+        <p>Event Name</p>
+
+      </div>
+      <p>Action</p>
+    </div>
+  {% for event in user_events %}
+    {% if event.attended_events.coordinator_id == current_user.id %}
+      <div class="event-info">
+        <div class="event-info-interior">
+        <p>{{ event.attended_events.event_name }} &nbsp;&nbsp;&nbsp;<i>
+          
+          {% if event.attended_events.event_status=='open' %}
+          <span style="color: rgb(255, 41, 41); text-shadow: 0px 0px 5px black;">Not Started...</span>
+          {% elif event.attended_events.event_status=='closed'%}
+          <span  style="color: rgb(28, 197, 45); text-shadow: 0px 0px 5px black;">In Progress</span>
+          {% endif %}
+        </i></p>
+       
+    
+
+        </div>
+        {% if event.attended_events.event_status=='closed'%}
+        <a href="{{ url_for('secret_info', event_id=event.event_id, person_id= get_receiver_member(event.attended_events.event_id)) }}"><button class="secret-btn" style="margin-right: 10px;">Secret Person</button></a>
+        {% endif %}
+        <a href="{{ url_for('event_info', event_id=event.event_id) }}"><button class="edit-btn">Edit</button></a>
+      </div>
+    {% endif %}
+  {% endfor %}
+  <br/>
+  <h3 class="dash-title">Your Participant Events</h3><br/>
+  <div class="info-titles">
+    <div class="event-info-interior">
+      <p>Event Name</p>
+    </div>
+    
+    
+    <p>Action</p>
+  </div>
+  {% for event in user_events %}
+  {% if current_user.is_authenticated and event.attended_events.coordinator_id != current_user.id %}
+    <div class="event-info">
+      <div class="event-info-interior">
+      <p>{{event.attended_events.event_name}}  &nbsp;&nbsp;&nbsp;<i>
+          
+        {% if event.attended_events.event_status=='open' %}
+        <span style="color: rgb(255, 41, 41); text-shadow: 0px 0px 5px black;">Not Started...</span>
+        {% elif event.attended_events.event_status=='closed'%}
+        <span  style="color: rgb(28, 197, 45);text-shadow: 1px 1px 5px black;">In Progress</span>
+        {% endif %}</p></i>
+
+
+      </div>
+      {% if event.attended_events.event_status=='closed'%}
+      <a href="{{ url_for('secret_info', event_id=event.event_id, person_id= get_receiver_member(event.attended_events.event_id)) }}"><button class="secret-btn" style="margin-right: 10px;"  title="see your secret person">Secret Person</button></a>
+      {% endif %}
+
+      <a href="{{ url_for('event_info', event_id=event.event_id) }}"><button class="info-btn">Info</button></a>
+    </div>
+  {% endif %}
+{% endfor %}
+
+
+
+
+
+  </div>
+  </div>
+  {% else %}
+  <div class="all-content-flex">
+    <div class="current-container">
+      <center>
+        <b>Your Events</b>
+        <br>
+        <div class="background-pic"></div>
+        <img src="{{ url_for('static',filename='images/calendar.png') }}" height="250px">
+        <br>
+        <div class="event-num">You have 0 Events</div><br>
+        <a href="{{ url_for('events_page') }}" class="nav-item"><button class="browse-btn">Browse Events</button></a>
+      </center>
+    </div>
+  </div>
+  {% endif%}
+
+
+
+</center>
+
+{% endblock %}

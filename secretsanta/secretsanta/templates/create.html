@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block style %}
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/register.css') }}">
+{% endblock %}
+
+
+{% block title %}
+Register Page
+{% endblock %}
+
+
+
+
+{% block content %}
+<center>
+  
+  <div class="form-div">
+    <h1>Create Event</h1><br>
+    <form method="POST" class="form-register" style="color:white">
+      {{ form.hidden_tag() }}
+      <div class="div-field">
+      {{ form.event_name.label() }} <br>
+      {{ form.event_name(class="user-info",placeholder="Name of Event...") }}
+      </div>
+      <br>
+      <div class="create-button-div">
+      {{ form.submit(class="create-button") }}
+      </div>
+
+    </form>
+  </div>
+</center>
+{% endblock %}
+

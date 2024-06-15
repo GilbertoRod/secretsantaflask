@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+  {% block style %}
+  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/events.css') }}">
+  {% endblock %}
+
+  {% block title %}
+  Secret Santa | Events
+  {% endblock %}
+
+
+  {% block content %}
+
+  
+
+  
+    {% if events %}
+    <center>
+    <div class="create-btn-div-true">
+    <a href="{{url_for('create_event')}}"><button class="create-btn-yes">Create Event +</button></a>
+    </div>
+      
+      <div class="create-div">
+      
+      {% for event in events %}    
+      <div class="event">
+        <div class="titles-div">
+          
+          <h1 class="e-title"><span class="event-info-title">{{event.event_name|title}}</span></h1>
+          <h1 class="e-title e-status"><i>Status: 
+            
+            
+            {% if event.event_status|title=='Open' %}
+              <span class="event-status-info-open">{{event.event_status|upper}}</i></span></h1><br>
+            
+              {% elif event.event_status|title=='Closed' %}
+            <span class="event-status-info-closed">{{event.event_status|upper}}</i></span></h1><br>
+
+
+
+            {% endif %}
+            
+          <h1 class="e-title">Event Coordinator: <span class="event-info">{{event.coordinator.username}}</span></h1>
+          
+          
+          <h1 class="e-title"># of Members: <span class="event-info">
+            {% set count = [] %}
+            {% for person in event.members%}
+             
+              {% if person.status == 'member'%}
+                {% set _ = count.append(person) %}
+              {% endif %}
+            {% endfor %}
+            {{count|length}}
+          </span></h1>
+        </div>
+        <br><br><br><br>
+        <div class="buttons">
+
+          
+          {% if current_user.is_authenticated and current_user.id == event.coordinator.id %}
+            <a href="{{ url_for('event_info', event_id=event.event_id) }}"><button class="edit-btn">Edit</button></a>
+            <div class="js-confirm-delete-event">
+              <div class="confirm-info-container">
+              <p class="confirm-delete-text-title">Are you sure you want to delete this event?</p><br>
+              <p class="confirm-delete-text"><b>Note</b>: This event will be deleted and remove all its members.</p><br><br><br>
+              <div class="confirm-delete-btns">
+                <button class="cancel-btn"  onclick="untoggleConfirm()">Cancel</button>
+                <a href="{{ url_for('delete_event', event_id=event.event_id) }}"><button class="delete-btn">Delete</button></a>
+              </div>
+              </div>
+            </div>
+            <button class="delete-btn" onclick="toggleConfirm()">Delete Event</button>
+            {% else %}
+              <a href="{{ url_for('event_info', event_id=event.event_id) }}"><button class="info-btn">Info</button></a>
+              
+
+              
+              {% if current_user.is_authenticated and event.event_status == 'open' %}
+                {% set user_event_status=is_user_member(event, current_user) %}
+                {% if user_event_status=='none' %}
+                    <a href="{{ url_for('request_event', event_id=event.event_id, member_id=current_user.id) }}"><button class="request-btn">Request</button></a>
+                {% elif user_event_status=='pending' %}
+                <a href="{{ url_for('cancel_request', event_id=event.event_id) }}"><button class="remove-request-btn">Cancel Request</button></a>
+                {% endif %}
+              {% endif %}
+
+              
+            {% endif %}
+        </div>
+      </div>
+
+      {% endfor %}
+    </div></center>
+    {% else %}
+    <center>
+    <div class="no-event-div">
+    <p>Be the First To Create An Event!</p>
+    
+    <a href="{{url_for('create_event')}}"><button class="create-btn">Create Event +</button></a>
+    </div></center>
+    {% endif %}
+
+
+
+
+
+
+
+  <script>
+    function toggleConfirm(){
+      box_to_toggle=document.querySelector(".js-confirm-delete-event")
+      box_to_toggle.classList.add("confirm-delete-event")
+      box_to_toggle.classList.remove("js-confirm-delete-event")
+    }
+    function untoggleConfirm(){
+      box_to_toggle=document.querySelector(".confirm-delete-event")
+      box_to_toggle.classList.remove("confirm-delete-event")
+      box_to_toggle.classList.add("js-confirm-delete-event")
+    }
+  </script>
+  {% endblock %}
+</body>
+</html>

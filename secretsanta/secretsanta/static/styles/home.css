@@ -1,0 +1,76 @@
+@font-face {
+  font-family: 'Grinched';
+  src: url("{{ url_for('static', filename='fonts/grinched.regular.otf') }}");
+  font-style: normal;
+  font-weight: 1 1000;
+}
+body{
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 10px;
+}
+
+.main-content {
+  padding: 150px 10px;
+  width: 100%;
+
+  
+  
+}
+
+.main-text{
+  font-size: 135px;
+  color: rgb(161, 41, 41);
+  font-family: "Grinched";
+  text-shadow: 0px 0px 3px rgb(255, 255, 255);
+}
+.sub-text{
+  font-size: 50px;
+  font-family: "Grinched";
+  text-shadow: 0px 0px 5px rgb(0, 0, 0);
+}
+
+
+.start-btn{
+  background-color: brown;
+  padding: 15px 20px;
+  font-family: Rubik,'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-size: 20px;
+  display: inline-block;
+  cursor: pointer;
+  margin-top: 50px;
+  box-shadow: 0px 0px 8px white;
+  border-radius: 10px;
+  color: white;
+}
+.start-btn:hover{
+  background-color: rgb(211, 59, 59);
+}
+.start-btn:active{
+  background-color: rgb(202, 86, 86);
+}
+
+.sub-content {
+  display: inline-block;
+
+}
+
+.description {
+  text-align: start;
+}
+
+.main-question {
+  font-size: 70px;
+  font-family: "Grinched";
+  color:rgb(46, 110, 34);
+  text-shadow: 0px 0px 3px rgb(255, 255, 255);
+}
+
+.description {
+  max-width: 1250px;
+  font-size: 25px;
+  margin-top: 25px;
+  padding-left: 35px;
+  padding-right: 35px;
+  font-family: Rubik;
+}

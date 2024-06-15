@@ -1,0 +1,69 @@
+.form-register{
+  width : 100%;
+  
+}
+.form-div {
+  background-color: rgb(57, 57, 113);
+  display: inline-block;
+  padding:30px;
+  max-width: 500px;
+  width: 100%;
+  border-radius: 15px;
+}
+.div-field{
+  text-align: left;
+}
+.user-info {
+  width: 92%;
+  border: none;
+  font-size: 18px;
+  padding: 10px;
+  border-radius: 10px;
+  margin-top: 8px;
+}
+.create-button-div{
+  display: flex;
+  margin-right: 20px;
+  justify-content: end;
+  margin-top: 20px;
+}
+.create-button, .sign-button {
+  padding: 10px;
+  cursor: pointer;
+  background-color: rgb(127, 129, 255);
+  border-radius: 10px;
+  border:none;
+  color:white;
+  font-weight: bold;
+  font-size: 18px;
+  
+}
+
+.create-button:hover,
+.sign-button:hover{
+  background-color: rgb(96, 99, 240);
+}
+
+
+.already-account{
+  display: flex;
+  margin-right: 20px;
+  justify-content: end;
+  margin-top: 10px;
+  color: rgb(203, 198, 230);
+  font-size: 15px;
+}
+.account-anchor {
+  text-decoration: none;
+  color: rgb(174, 151, 181)
+}
+
+body{
+  padding-top: 150px;
+  background-color: rgb(122, 178, 208);
+
+}
+.alertbox{
+  margin-top: -140px;
+  margin-bottom: 140px;
+}
